@@ -182,6 +182,37 @@
   .item .label .chip {
     width: 7px; height: 18px; border-radius: 4px; background: #FF6B35; display: inline-block;
   }
+  .item .label.label-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-bottom: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+  .item .label.label-toggle .toggle-arrow {
+    margin-left: auto;
+    color: #B7BAC2;
+    font-size: 12px;
+    transition: transform .18s ease;
+    flex-shrink: 0;
+  }
+  .item .label.label-toggle .toggle-arrow.open { transform: rotate(90deg); color: #FF6B35; }
+  .item .itembody {
+    overflow: hidden;
+    max-height: 2000px;
+    opacity: 1;
+    margin-top: 8px;
+    transition: max-height .25s ease, opacity .2s ease, margin-top .2s ease;
+  }
+  .item .itembody.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+  }
   .item p {
     font-size: 14.5px; color: #3A4256; line-height: 1.6; font-weight: 500;
   }
@@ -569,7 +600,7 @@ function renderTabbar() {
   bar.innerHTML = html;
 }
 
-function itemHtml(it) {
+function itemHtml(it, uid) {
   let body = '';
   if (it.table) {
     const t = it.table;
@@ -585,7 +616,26 @@ function itemHtml(it) {
   } else {
     body = `<p>${it.text}</p>`;
   }
+
+  const isExample = it.label && it.label.indexOf('예시') === 0;
+  if (isExample && uid) {
+    return `<div class="item">
+      <button type="button" class="label label-toggle" onclick="toggleItem('${uid}')">
+        <span class="chip"></span>${it.label}
+        <span class="toggle-arrow" id="arrow-${uid}">▸</span>
+      </button>
+      <div class="itembody collapsed" id="body-${uid}">${body}</div>
+    </div>`;
+  }
   return `<div class="item"><div class="label"><span class="chip"></span>${it.label}</div>${body}</div>`;
+}
+
+function toggleItem(uid) {
+  const body = document.getElementById('body-' + uid);
+  const arrow = document.getElementById('arrow-' + uid);
+  if (!body) return;
+  const nowCollapsed = body.classList.toggle('collapsed');
+  if (arrow) arrow.classList.toggle('open', !nowCollapsed);
 }
 
 function openRule(i) {
@@ -598,7 +648,7 @@ function openRule(i) {
   document.getElementById('titleRow').innerHTML = `<span style="font-size:20px">${r.icon}</span><h1 class="screen-title">${r.name}</h1>`;
   document.getElementById('subtitleText').innerText = `RULE ${r.num} · 장유 탁구리그 경기원칙`;
 
-  let html = r.items.map(itemHtml).join('');
+  let html = r.items.map((it, idx) => itemHtml(it, r.num + '-' + idx)).join('');
   if (r.note) {
     html += `<div class="note">※ ${r.note}</div>`;
   }
