@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>장유 탁구리그 경기원칙</title>
+<style>
+  @font-face {
+    font-family: 'AppFont';
+    src: local('Noto Sans CJK KR');
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%;
+    background: #E8E4DC;
+    font-family: 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  /* phone frame */
+  .phone {
+    width: 420px;
+    max-width: 100%;
+    height: 860px;
+    max-height: 92vh;
+    background: #FBF7F0;
+    border-radius: 40px;
+    box-shadow: 0 30px 60px rgba(20,33,61,0.25), 0 0 0 10px #14213D;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .notch {
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 140px; height: 26px;
+    background: #14213D;
+    border-radius: 0 0 18px 18px;
+    z-index: 50;
+  }
+
+  /* App bar */
+  .appbar {
+    background: #14213D;
+    color: #FBF7F0;
+    padding: calc(46px + env(safe-area-inset-top, 0px)) 22px 18px 22px;
+    flex-shrink: 0;
+  }
+  .appbar .rowtop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 34px;
+  }
+  .backbtn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #FBF7F0;
+    font-size: 18px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .backbtn.show { display: flex; }
+  .appbar .brand-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .appbar .ball { width: 20px; height: 20px; border-radius: 50%; background: #FF6B35; flex-shrink:0; }
+  .appbar h1 {
+    font-size: 21px;
+    font-weight: 800;
+  }
+  .appbar .screen-title {
+    font-size: 21px; font-weight: 800;
+  }
+  .appbar .subtitle {
+    font-size: 13px;
+    color: #9AA3B5;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  /* Screens */
+  .screens {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(16px);
+    transition: opacity .22s ease, transform .22s ease;
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+  .screen::-webkit-scrollbar { width: 0; }
+
+  /* Home grid */
+  .home-pad { padding: 20px 20px 100px 20px; }
+  .devcredit {
+    text-align: center;
+    font-size: 11px;
+    color: #B7BAC2;
+    font-weight: 600;
+    letter-spacing: .3px;
+    margin-top: 22px;
+  }
+  .home-lead {
+    font-size: 14px; color: #6B7488; font-weight: 500; margin-bottom: 18px; line-height: 1.6;
+  }
+  .tile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .tile {
+    background: #FFFFFF;
+    border: 2px solid #EDE7DA;
+    border-radius: 20px;
+    padding: 18px 16px;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .tile:active { transform: scale(0.96); }
+  .tile .tnum {
+    width: 30px; height: 30px;
+    border-radius: 10px;
+    background: #14213D;
+    color: #FF6B35;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tile .tname {
+    font-size: 16px;
+    font-weight: 800;
+    color: #14213D;
+    line-height: 1.35;
+  }
+  .tile .tdesc {
+    font-size: 12px;
+    color: #8A8F9E;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Detail screen */
+  .detail-pad { padding: 22px 22px 40px 22px; }
+  .item {
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 20px 20px;
+    border: 2px solid #EDE7DA;
+    margin-bottom: 16px;
+  }
+  .item .label {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 15px; font-weight: 800; color: #14213D; margin-bottom: 8px;
+  }
+  .item .label .chip {
+    width: 7px; height: 18px; border-radius: 4px; background: #FF6B35; display: inline-block;
+  }
+  .item p {
+    font-size: 14.5px; color: #3A4256; line-height: 1.6; font-weight: 500;
+  }
+  .item p b { color: #14213D; font-weight: 800; }
+  .item ul { margin-top: 4px; padding-left: 2px; }
+  .item ul li {
+    font-size: 14px; color: #3A4256; line-height: 1.7; font-weight: 500; list-style: none;
+    padding-left: 20px; position: relative;
+  }
+  .item ul li::before {
+    content: '·'; position: absolute; left: 4px; color: #FF6B35; font-weight: 900; font-size: 18px; top: -2px;
+  }
+  .note {
+    font-size: 12.5px; color: #8A8F9E; font-weight: 500; line-height: 1.6; margin-top: 4px; padding: 0 2px;
+  }
+  .note b { color: #FF6B35; }
+
+  .tablewrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    border: 2px solid #EDE7DA;
+  }
+  table.restable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    font-size: 11px;
+  }
+  table.restable th, table.restable td {
+    padding: 7px 3px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  table.restable thead tr {
+    background: #14213D;
+  }
+  table.restable thead th {
+    color: #FBF7F0;
+    font-weight: 800;
+    font-size: 10.5px;
+  }
+  table.restable tbody th {
+    background: #F1ECE2;
+    color: #14213D;
+    font-weight: 800;
+    text-align: center;
+  }
+  table.restable tbody td {
+    color: #3A4256;
+    font-weight: 600;
+    border-top: 1px solid #EDE7DA;
+  }
+  table.restable tbody tr:nth-child(even) td {
+    background: #FBF9F4;
+  }
+  table.restable td.hl {
+    color: #FF6B35;
+    font-weight: 800;
+  }
+  .tcaption {
+    font-size: 11.5px; color: #8A8F9E; font-weight: 500; margin-top: 8px; line-height: 1.5;
+  }
+
+  .navpair {
+    display: flex; gap: 10px; margin-top: 22px;
+  }
+  .navbtn {
+    flex: 1;
+    background: #FFFFFF;
+    border: 2px solid #EDE7DA;
+    border-radius: 14px;
+    padding: 13px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #14213D;
+    cursor: pointer;
+    text-align: center;
+  }
+  .navbtn.disabled { opacity: 0.35; pointer-events: none; }
+  .navbtn:active { background: #F1ECE2; }
+
+  /* Tool tile on home */
+  .tile.tile-tool {
+    grid-column: 1 / -1;
+    background: #14213D;
+    border-color: #14213D;
+  }
+  .tile.tile-tool .tnum { background: #FF6B35; color: #14213D; }
+  .tile.tile-tool .tname { color: #FBF7F0; }
+  .tile.tile-tool .tdesc { color: #9AA3B5; }
+
+  /* Calculator */
+  .calc-stepper {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .calc-stepbtn {
+    width: 40px; height: 40px; border-radius: 12px;
+    border: 2px solid #EDE7DA; background: #FFFFFF;
+    font-size: 20px; font-weight: 800; color: #14213D;
+    cursor: pointer;
+  }
+  .calc-stepbtn:active { background: #F1ECE2; }
+  .calc-stepval { font-size: 16px; font-weight: 800; color: #14213D; min-width: 44px; text-align: center; }
+
+  .calc-modetoggle { display: flex; gap: 8px; }
+  .calc-modebtn {
+    flex: 1; padding: 12px 8px; border-radius: 12px;
+    border: 2px solid #EDE7DA; background: #FFFFFF;
+    font-size: 12.5px; font-weight: 700; color: #8A8F9E;
+    cursor: pointer;
+  }
+  .calc-modebtn.active { background: #14213D; border-color: #14213D; color: #FBF7F0; }
+
+  .calc-names { display: flex; flex-wrap: wrap; gap: 8px; }
+  .calc-nameinput {
+    width: 64px; padding: 9px 8px; border-radius: 10px;
+    border: 2px solid #EDE7DA; background: #FFFFFF;
+    font-size: 13px; font-weight: 700; color: #14213D; text-align: center;
+    font-family: inherit;
+  }
+  .calc-nameinput:focus { outline: none; border-color: #FF6B35; }
+
+  .calc-matches { display: flex; flex-direction: column; gap: 8px; }
+  .calc-pairbox {
+    display: flex; flex-direction: column; gap: 7px;
+    background: #FFFFFF; border: 2px solid #EDE7DA; border-radius: 12px;
+    padding: 9px 12px;
+  }
+  .calc-pairbox.invalid { border-color: #FF6B35; background: #FFF6F1; }
+  .calc-matchrow {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .calc-matchlabel {
+    flex: 1; font-size: 12.5px; font-weight: 700; color: #3A4256;
+  }
+  .calc-scoreinput {
+    width: 42px; padding: 7px 4px; border-radius: 8px;
+    border: 2px solid #EDE7DA; background: #FBF9F4;
+    font-size: 13px; font-weight: 800; color: #14213D; text-align: center;
+    font-family: inherit;
+  }
+  .calc-scoreinput:focus { outline: none; border-color: #FF6B35; }
+  .calc-scoreinput:disabled { background: #F1ECE2; color: #B7BAC2; }
+  .calc-colon { font-weight: 800; color: #B7BAC2; }
+  .calc-forfeitrow {
+    display: flex; align-items: center; gap: 6px;
+    border-top: 1px dashed #EDE7DA; padding-top: 6px;
+  }
+  .calc-forfeitlabel { font-size: 11px; font-weight: 700; color: #9AA3B5; white-space: nowrap; }
+  .calc-forfeitselect {
+    flex: 1; padding: 5px 6px; border-radius: 8px;
+    border: 2px solid #EDE7DA; background: #FBF9F4;
+    font-size: 11.5px; font-weight: 700; color: #14213D;
+    font-family: inherit;
+  }
+  .calc-forfeitselect:focus { outline: none; border-color: #FF6B35; }
+  .calc-warn {
+    font-size: 11.5px; color: #FF6B35; font-weight: 600; line-height: 1.5;
+    margin: -2px 2px 4px 2px;
+  }
+
+  table.calc-restable th, table.calc-restable td { font-size: 12px; }
+  table.calc-restable td:last-child, table.calc-restable th:last-child {
+    white-space: normal; text-align: left; line-height: 1.3; font-size: 11px;
+  }
+
+  /* Bottom tab bar */
+  .tabbar {
+    flex-shrink: 0;
+    display: flex;
+    background: #FFFFFF;
+    border-top: 2px solid #EDE7DA;
+    padding: 10px 6px calc(14px + env(safe-area-inset-bottom, 0px)) 6px;
+  }
+  .tabbtn {
+    flex: 1;
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 2px;
+    cursor: pointer;
+    color: #A2A6B3;
+  }
+  .tabbtn .dotmark {
+    width: 7px; height: 7px; border-radius: 50%; background: transparent;
+  }
+  .tabbtn.active { color: #14213D; }
+  .tabbtn.active .dotmark { background: #FF6B35; }
+  .tabbtn span.lbl { font-size: 10.5px; font-weight: 700; }
+
+  /* On an actual phone screen, drop the decorative phone-mockup frame
+     and let the app fill the whole viewport like a real app. */
+  @media (max-width: 640px) {
+    html, body { background: #FBF7F0; }
+    body {
+      padding: 0;
+      align-items: stretch;
+      justify-content: stretch;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+    .phone {
+      width: 100%;
+      max-width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      max-height: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .notch { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="appbar">
+    <div class="rowtop">
+      <button class="backbtn" id="backBtn" onclick="goHome()">‹</button>
+      <div class="brand-row" id="titleRow">
+        <div class="ball"></div>
+        <h1>장유 탁구리그</h1>
+      </div>
+    </div>
+    <div class="subtitle" id="subtitleText">경기원칙 안내 · 전체 5개 규정</div>
+  </div>
+
+  <div class="screens">
+    <!-- HOME -->
+    <div class="screen active" id="screen-home">
+      <div class="home-pad">
+        <div class="home-lead">항목을 눌러 세부 경기원칙을 확인하세요.</div>
+        <div class="tile-grid" id="tileGrid"></div>
+        <div class="devcredit">Developed by 2026 경기이사</div>
+      </div>
+    </div>
+
+    <!-- DETAIL (shared template, filled by JS) -->
+    <div class="screen" id="screen-detail">
+      <div class="detail-pad" id="detailContent"></div>
+    </div>
+
+    <!-- CALCULATOR -->
+    <div class="screen" id="screen-calc">
+      <div class="detail-pad" id="calcContent"></div>
+    </div>
+  </div>
+
+  <div class="tabbar" id="tabbar"></div>
+</div>
+
+<script>
+const RULES = [
+  {
+    id: 'rank',
+    num: '01',
+    name: '개인전 순위 결정',
+    icon: '🏅',
+    desc: '승패 기준 · 누적승점제 순위 산정 방식',
+    items: [
+      { label: '기본 원칙', text: '개인전 순위는 기본적으로 <b>승패(승수)</b>를 기준으로 산정하며, <b>승수가 많은 선수</b>가 상위 순위를 갖습니다. 리그 운영 방식에 따라 <b>누적승점제</b>를 적용할 수도 있습니다.' },
+      { label: '① 승패 기준 — 2명 동률', text: '동률인 두 선수는 <b>맞대결(승자승) 결과</b>로 순위를 결정합니다. 즉, 두 선수의 경기에서 이긴 선수가 상위 순위를 갖습니다.' },
+      { label: '① 승패 기준 — 3명 이상 동률', text: '3명이 동률인 경우, <b>3명 상호간의 세트 득실률(득/실)</b>을 우선으로 하며, 이마저 같을 시 <b>추첨</b>합니다.' },
+      {
+        label: '예시 — 결과표 (① 승패 기준)',
+        table: {
+          cols: ['A', 'B', 'C', '승/패', '득실률', '순위'],
+          rows: [
+            { name: 'A', vals: ['-', '3', '2', '1/1', '1.67', '1위'], highlight: [5] },
+            { name: 'B', vals: ['0', '-', '3', '1/1', '0.75', '3위'], highlight: [5] },
+            { name: 'C', vals: ['3', '1', '-', '1/1', '0.80', '2위'], highlight: [5] }
+          ]
+        },
+        caption: '표의 각 칸은 해당 선수가 그 상대에게서 딴 세트 수입니다. (예: A행-B열 3 → A가 B에게 3세트를 땄음)'
+      },
+      { label: '예시 — 득실률 계산', text: '세 선수 모두 <b>1승 1패</b>로 동률이므로 각자의 세트 득실률(득÷실)을 비교합니다.<br><br>A = 5득 ÷ 3실 = <b>1.67</b><br>B = 3득 ÷ 4실 = <b>0.75</b><br>C = 4득 ÷ 5실 = <b>0.80</b><br><br>득실률이 <b>가장 낮은 B가 예선 탈락</b>하고, <b>A → C → B</b> 순으로 순위가 정해집니다.' },
+      { label: '② 누적승점제 — 산정 기준', text: '누적승점제로 운영할 경우 <b>승패 합산(매치 승수)은 순위에 영향을 주지 않으며</b>, 각 선수가 치른 모든 경기에서 획득한 <b>세트 승수(1세트 승 = 1점)를 합산</b>하여 <b>승점이 많은 선수</b>가 상위 순위를 갖습니다.' },
+      { label: '② 누적승점제 — 동률 처리', text: '승점이 같을 경우 <b>2명 동률</b>은 <b>두 선수 간 맞대결(승자승)</b>으로 정하고, <b>3명 이상 동률</b>은 <b>동률자끼리의 세트 득실률</b>로 순위를 정합니다.' },
+      {
+        label: '예시 — 결과표 (② 누적승점제)',
+        table: {
+          cols: ['A', 'B', 'C', '승점', '순위'],
+          rows: [
+            { name: 'A', vals: ['-', '3', '1', '4', '1위'], highlight: [4] },
+            { name: 'B', vals: ['0', '-', '2', '2', '3위'], highlight: [4] },
+            { name: 'C', vals: ['2', '1', '-', '3', '2위'], highlight: [4] }
+          ]
+        },
+        caption: '표의 각 칸은 해당 선수가 그 상대에게서 딴 세트 수입니다. 승점은 그 선수가 딴 세트 수의 합산입니다.'
+      },
+      { label: '예시 — 순위 계산', text: '각 선수의 승점은 <b>A = 3+1 = 4점</b>, <b>B = 0+2 = 2점</b>, <b>C = 2+1 = 3점</b>입니다.<br><br>승점이 높은 순서대로 <b>A(4점) 1위 → C(3점) 2위 → B(2점) 3위</b>가 됩니다. (승점이 같을 경우에만 승자승 · 세트 득실률로 추가 순위를 정합니다.)' }
+    ]
+  },
+  {
+    id: 'teamrank',
+    num: '02',
+    name: '단체전 순위 결정',
+    icon: '🤝',
+    desc: '팀 순위 산정 및 동점 처리 기준',
+    items: [
+      { label: '운영 방식 구분', text: '4단1복 단체전은 운영 방식에 따라 순위 산정 기준이 <b>2가지</b>로 나뉩니다: <b>3승 확정 시 조기 종료</b>하는 경우와 <b>5경기를 모두 진행</b>하는 경우.' },
+      { label: '① 조기 종료(3승제) — 승패 기준', text: '팀 매치의 <b>승패</b>로 순위를 정하며, <b>승리 경기가 많은 팀</b>이 상위 순위를 갖습니다. 동률 시에는 <b>2팀 동률 → 승자승 / 3팀 이상 동률 → 세트 득실률 → 추첨</b> 순으로 정합니다.' },
+      { label: '② 5경기 전 경기 진행 — 누적 승점제', text: '경기 승패 합산은 순위에 영향을 주지 않으며, 각 경기에서 획득한 <b>세트 승수(1세트 승 = 1점)를 합산</b>하여 <b>승점이 많은 팀</b>이 상위 순위를 갖습니다.' },
+      { label: '누적 승점 동률 처리', text: '<b>2팀 동률</b>은 <b>두 팀 간 맞대결(승자승)</b>으로 정하고, <b>3팀 이상 동률</b>은 <b>세트 득실률</b>로 순위를 정합니다. 이마저 같을 시 <b>가위바위보</b>로 최종 결정합니다.' }
+    ]
+  },
+  {
+    id: 'handi',
+    num: '03',
+    name: '핸디 규정',
+    icon: '⚖️',
+    desc: '단식·복식 최대 핸디 기준',
+    items: [
+      { label: '핸디 산정 기준', text: '<b>1부수 차이당 핸디 1점</b>을 기준으로 산정합니다.' },
+      { label: '단식 최대 핸디', text: '단식 경기의 최대 핸디는 <b>6점</b>입니다.' },
+      { label: '복식 최대 핸디', text: '복식 경기의 최대 핸디는 <b>4점</b>입니다.' }
+    ]
+  },
+  {
+    id: 'doubles',
+    num: '04',
+    name: '복식 규정',
+    icon: '👥',
+    desc: '서브권 결정, 자리 변경, 마지막 경기 서브권 변경',
+    items: [
+      { label: '서브권 결정 — 가위바위보', text: '복식 경기에서는 <b>양 팀에서 한 사람씩</b> 가위바위보를 합니다. <b>이긴 사람이 서브</b>, <b>진 사람이 리시브</b>를 받는 것으로 순서를 정합니다.' },
+      { label: '자리(순서) 변경 금지', text: '가위바위보로 정해진 <b>서브권 또는 리시브권은 같은 팀 선수끼리 서로 변경할 수 없습니다.</b>' },
+      { label: '마지막 경기 서브권 변경', text: '복식 마지막 경기에서는 <b>핸디를 준 팀(핸디 없는 팀)이 5점</b>에 도달할 경우 <b>서브권을 변경</b>합니다.' }
+    ]
+  },
+  {
+    id: 'forfeit',
+    num: '05',
+    name: '기권 처리 규정',
+    icon: '🚫',
+    desc: '경기 도중 · 본선 진출 전 기권 처리 기준',
+    items: [
+      { label: '기권 전 스코어 인정', text: '경기 도중 기권한 경우, <b>기권 시점까지 진행된 세트 결과</b>는 그대로 인정합니다.' },
+      { label: '최종 스코어 처리', text: '기권 이후 잔여 세트는 상대방 승리로 처리하며, 실제 세트 수와 관계없이 <b>3판 2선승제는 2:0</b>, <b>5판 3선승제는 3:0</b>으로 최종 기록합니다.' },
+      { label: '본선 진출 전 기권', text: '조별리그(예선)를 모두 마친 뒤 <b>본선 진출 전 기권</b>한 경우, <b>본선에 진출한 것으로 인정</b>한 후 해당 본선 경기를 기권패로 처리합니다.' }
+    ]
+  }
+];
+
+let currentIndex = -1; // -1 = home
+
+function renderHome() {
+  const grid = document.getElementById('tileGrid');
+  grid.innerHTML = RULES.map((r, i) => `
+    <button class="tile" onclick="openRule(${i})">
+      <div class="tnum">${r.num}</div>
+      <div class="tname">${r.name}</div>
+      <div class="tdesc">${r.desc}</div>
+    </button>
+  `).join('') + `
+    <button class="tile tile-tool" onclick="openCalc()">
+      <div class="tname">🧮 순위 계산기</div>
+      <div class="tdesc">경기 결과만 입력하면 순위를 자동 계산</div>
+    </button>
+  `;
+}
+
+function renderTabbar() {
+  const bar = document.getElementById('tabbar');
+  const homeActive = currentIndex === -1;
+  let html = `<button class="tabbtn ${homeActive ? 'active' : ''}" onclick="goHome()">
+      <div class="dotmark"></div><span class="lbl">홈</span>
+    </button>`;
+  RULES.forEach((r, i) => {
+    html += `<button class="tabbtn ${currentIndex === i ? 'active' : ''}" onclick="openRule(${i})">
+      <div class="dotmark"></div><span class="lbl">${r.num}</span>
+    </button>`;
+  });
+  html += `<button class="tabbtn ${currentIndex === 'calc' ? 'active' : ''}" onclick="openCalc()">
+      <div class="dotmark"></div><span class="lbl">계산기</span>
+    </button>`;
+  bar.innerHTML = html;
+}
+
+function itemHtml(it) {
+  let body = '';
+  if (it.table) {
+    const t = it.table;
+    const thead = '<tr><th></th>' + t.cols.map(c => `<th>${c}</th>`).join('') + '</tr>';
+    const rows = t.rows.map(r => `<tr><th>${r.name}</th>` + r.vals.map((v, vi) => {
+      const cls = r.highlight && r.highlight.includes(vi) ? ' class="hl"' : '';
+      return `<td${cls}>${v}</td>`;
+    }).join('') + '</tr>').join('');
+    body = `<div class="tablewrap"><table class="restable"><thead>${thead}</thead><tbody>${rows}</tbody></table></div>`;
+    if (it.caption) body += `<p class="tcaption">${it.caption}</p>`;
+  } else if (it.list) {
+    body = '<ul>' + it.list.map(l => `<li>${l}</li>`).join('') + '</ul>';
+  } else {
+    body = `<p>${it.text}</p>`;
+  }
+  return `<div class="item"><div class="label"><span class="chip"></span>${it.label}</div>${body}</div>`;
+}
+
+function openRule(i) {
+  currentIndex = i;
+  const r = RULES[i];
+  document.getElementById('screen-home').classList.remove('active');
+  document.getElementById('screen-calc').classList.remove('active');
+  document.getElementById('screen-detail').classList.add('active');
+  document.getElementById('backBtn').classList.add('show');
+  document.getElementById('titleRow').innerHTML = `<span style="font-size:20px">${r.icon}</span><h1 class="screen-title">${r.name}</h1>`;
+  document.getElementById('subtitleText').innerText = `RULE ${r.num} · 장유 탁구리그 경기원칙`;
+
+  let html = r.items.map(itemHtml).join('');
+  if (r.note) {
+    html += `<div class="note">※ ${r.note}</div>`;
+  }
+  html += `<div class="navpair">
+    <button class="navbtn ${i === 0 ? 'disabled' : ''}" onclick="openRule(${i - 1})">‹ 이전 규정</button>
+    <button class="navbtn ${i === RULES.length - 1 ? 'disabled' : ''}" onclick="openRule(${i + 1})">다음 규정 ›</button>
+  </div>`;
+  document.getElementById('detailContent').innerHTML = html;
+  document.getElementById('screen-detail').scrollTop = 0;
+  const scr = document.getElementById('screen-detail');
+  scr.scrollTo(0, 0);
+  renderTabbar();
+}
+
+function goHome() {
+  currentIndex = -1;
+  document.getElementById('screen-detail').classList.remove('active');
+  document.getElementById('screen-calc').classList.remove('active');
+  document.getElementById('screen-home').classList.add('active');
+  document.getElementById('backBtn').classList.remove('show');
+  document.getElementById('titleRow').innerHTML = `<div class="ball"></div><h1>장유 탁구리그</h1>`;
+  document.getElementById('subtitleText').innerText = '경기원칙 안내 · 전체 5개 규정';
+  renderTabbar();
+}
+
+/* ===================== 순위 계산기 ===================== */
+
+const calcState = {
+  n: 4,
+  names: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+  mode: 'winloss', // 'winloss' | 'cumulative'
+  matchFormat: '5-3', // '3-2' | '5-3' (used when mode === 'winloss')
+  setCount: 5, // used when mode === 'cumulative'
+  scores: {}, // key "i-j" (i<j) -> [setsI, setsJ]
+  forfeits: {} // key "i-j" -> 'i' | 'j' (who forfeited)
+};
+
+function calcMaxTotal() {
+  if (calcState.mode === 'winloss') {
+    return calcState.matchFormat === '3-2' ? 3 : 5;
+  }
+  return calcState.setCount;
+}
+
+function calcWinsNeeded() {
+  return calcState.matchFormat === '3-2' ? 2 : 3;
+}
+
+function calcForfeitWinnerScore() {
+  return calcState.mode === 'winloss' ? calcWinsNeeded() : calcState.setCount;
+}
+
+function calcReapplyForfeits() {
+  const winnerScore = calcForfeitWinnerScore();
+  Object.keys(calcState.forfeits).forEach(key => {
+    const side = calcState.forfeits[key];
+    calcState.scores[key] = side === 'i' ? [0, winnerScore] : [winnerScore, 0];
+  });
+}
+
+function calcSetMatchFormat(fmt) {
+  calcState.matchFormat = fmt;
+  calcReapplyForfeits();
+  renderCalc();
+}
+
+function calcSetCount(delta) {
+  calcState.setCount = Math.max(1, Math.min(9, calcState.setCount + delta));
+  calcReapplyForfeits();
+  renderCalc();
+}
+
+function calcSetForfeit(i, j, val) {
+  const key = i + '-' + j;
+  if (val === 'none') {
+    delete calcState.forfeits[key];
+    delete calcState.scores[key];
+  } else {
+    calcState.forfeits[key] = val;
+    const winnerScore = calcForfeitWinnerScore();
+    calcState.scores[key] = val === 'i' ? [0, winnerScore] : [winnerScore, 0];
+  }
+  renderCalcMatches();
+  renderCalcResults();
+}
+
+function openCalc() {
+  currentIndex = 'calc';
+  document.getElementById('screen-home').classList.remove('active');
+  document.getElementById('screen-detail').classList.remove('active');
+  document.getElementById('screen-calc').classList.add('active');
+  document.getElementById('backBtn').classList.add('show');
+  document.getElementById('titleRow').innerHTML = `<span style="font-size:20px">🧮</span><h1 class="screen-title">순위 계산기</h1>`;
+  document.getElementById('subtitleText').innerText = 'TOOL · 승패 기준 / 누적승점제 자동 계산';
+  renderCalc();
+  document.getElementById('screen-calc').scrollTo(0, 0);
+  renderTabbar();
+}
+
+function calcSetPlayers(delta) {
+  calcState.n = Math.max(2, Math.min(7, calcState.n + delta));
+  renderCalc();
+}
+
+function calcSetMode(mode) {
+  calcState.mode = mode;
+  calcReapplyForfeits();
+  renderCalc();
+}
+
+function calcSetName(i, val) {
+  calcState.names[i] = val || String.fromCharCode(65 + i);
+  renderCalcMatches();
+  renderCalcResults();
+  renderCalcNamesLabelsOnly();
+}
+
+function calcSetScore(i, j, which, val) {
+  const key = i + '-' + j;
+  const cur = calcState.scores[key] || [0, 0];
+  const num = val === '' ? 0 : Math.max(0, parseInt(val, 10) || 0);
+  cur[which] = num;
+  calcState.scores[key] = cur;
+  calcUpdateValidity(i, j);
+  renderCalcResults();
+}
+
+function calcRowWarning(i, j, v0, v1) {
+  const nameA = calcState.names[i], nameB = calcState.names[j];
+  if (v0 === v1 && v0 > 0) {
+    return `⚠ ${nameA} vs ${nameB}: 동점(${v0}:${v1}) 스코어는 있을 수 없습니다. 오타 여부를 확인해 주세요. (이 경기는 어느 쪽 승수에도 반영되지 않습니다)`;
+  }
+  if (calcState.mode === 'winloss') {
+    const need = calcWinsNeeded();
+    if (v0 > need || v1 > need) {
+      const label = calcState.matchFormat === '3-2' ? '3판 2승제' : '5판 3승제';
+      return `⚠ ${nameA} vs ${nameB}: ${label}에서는 한 선수가 최대 ${need}세트까지만 얻을 수 있습니다. (입력값 ${v0}:${v1})`;
+    }
+  }
+  const max = calcMaxTotal();
+  if (v0 + v1 > max) {
+    const label = calcState.mode === 'winloss'
+      ? (calcState.matchFormat === '3-2' ? '3판 2승제(최대 3세트)' : '5판 3승제(최대 5세트)')
+      : `설정한 ${max}세트제`;
+    return `⚠ ${nameA} vs ${nameB}: 세트 합계(${v0}:${v1} = ${v0 + v1}세트)가 ${label} 최대치를 초과했습니다. 스코어를 확인해 주세요.`;
+  }
+  return '';
+}
+
+function calcUpdateValidity(i, j) {
+  const key = i + '-' + j;
+  const v = calcState.scores[key] || [0, 0];
+  const forfeited = !!calcState.forfeits[key];
+  const warn = (!forfeited && (v[0] > 0 || v[1] > 0)) ? calcRowWarning(i, j, v[0], v[1]) : '';
+  const row = document.getElementById('calc-row-' + i + '-' + j);
+  const warnSlot = document.getElementById('calc-warn-' + i + '-' + j);
+  if (row) row.classList.toggle('invalid', !!warn);
+  if (warnSlot) warnSlot.innerHTML = warn ? `<p class="calc-warn">${warn}</p>` : '';
+}
+
+function renderCalc() {
+  const n = calcState.n;
+  const html = `
+    <div class="item">
+      <div class="label"><span class="chip"></span>인원 수</div>
+      <div class="calc-stepper">
+        <button class="calc-stepbtn" onclick="calcSetPlayers(-1)">−</button>
+        <span class="calc-stepval">${n}명</span>
+        <button class="calc-stepbtn" onclick="calcSetPlayers(1)">+</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="label"><span class="chip"></span>순위 산정 방식</div>
+      <div class="calc-modetoggle">
+        <button class="calc-modebtn ${calcState.mode === 'winloss' ? 'active' : ''}" onclick="calcSetMode('winloss')">① 승패 기준</button>
+        <button class="calc-modebtn ${calcState.mode === 'cumulative' ? 'active' : ''}" onclick="calcSetMode('cumulative')">② 누적승점제</button>
+      </div>
+    </div>
+    ${calcState.mode === 'winloss' ? `
+    <div class="item">
+      <div class="label"><span class="chip"></span>경기 방식</div>
+      <div class="calc-modetoggle">
+        <button class="calc-modebtn ${calcState.matchFormat === '3-2' ? 'active' : ''}" onclick="calcSetMatchFormat('3-2')">3판 2승제</button>
+        <button class="calc-modebtn ${calcState.matchFormat === '5-3' ? 'active' : ''}" onclick="calcSetMatchFormat('5-3')">5판 3승제</button>
+      </div>
+      <p class="tcaption">선택한 방식에 따라 한 경기의 세트 합계 최대치(3판 2승제 3세트 / 5판 3승제 5세트)를 넘는 스코어는 자동으로 경고됩니다.</p>
+    </div>` : `
+    <div class="item">
+      <div class="label"><span class="chip"></span>세트 수</div>
+      <div class="calc-stepper">
+        <button class="calc-stepbtn" onclick="calcSetCount(-1)">−</button>
+        <span class="calc-stepval">${calcState.setCount}세트제</span>
+        <button class="calc-stepbtn" onclick="calcSetCount(1)">+</button>
+      </div>
+      <p class="tcaption">한 경기에서 두 선수가 치른 세트 합계가 설정한 세트 수를 넘으면 자동으로 경고됩니다.</p>
+    </div>`}
+    <div class="item">
+      <div class="label"><span class="chip"></span>선수 이름</div>
+      <div class="calc-names" id="calcNames"></div>
+    </div>
+    <div class="item">
+      <div class="label"><span class="chip"></span>경기 결과 입력 (세트 스코어)</div>
+      <div class="calc-matches" id="calcMatches"></div>
+      <p class="tcaption">입력하지 않은 경기는 아직 치르지 않은 것으로 처리됩니다.</p>
+    </div>
+    <div id="calcResults"></div>
+  `;
+  document.getElementById('calcContent').innerHTML = html;
+  renderCalcNames();
+  renderCalcMatches();
+  renderCalcResults();
+}
+
+function renderCalcNamesLabelsOnly() {
+  document.querySelectorAll('.calc-matchlabel').forEach(el => {
+    const i = parseInt(el.dataset.i, 10), j = parseInt(el.dataset.j, 10);
+    el.innerText = `${calcState.names[i]} vs ${calcState.names[j]}`;
+  });
+}
+
+function renderCalcNames() {
+  const wrap = document.getElementById('calcNames');
+  if (!wrap) return;
+  const n = calcState.n;
+  let html = '';
+  for (let i = 0; i < n; i++) {
+    html += `<input class="calc-nameinput" value="${calcState.names[i]}" maxlength="6"
+      oninput="calcSetName(${i}, this.value)">`;
+  }
+  wrap.innerHTML = html;
+}
+
+function renderCalcMatches() {
+  const wrap = document.getElementById('calcMatches');
+  if (!wrap) return;
+  const n = calcState.n;
+  let html = '';
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const key = i + '-' + j;
+      const has = !!calcState.scores[key];
+      const v = calcState.scores[key] || ['', ''];
+      const forfeit = calcState.forfeits[key] || 'none';
+      const disabled = forfeit !== 'none' ? 'disabled' : '';
+      const warn = (has && forfeit === 'none') ? calcRowWarning(i, j, v[0], v[1]) : '';
+      html += `
+        <div class="calc-pairbox ${warn ? 'invalid' : ''}" id="calc-row-${i}-${j}">
+          <div class="calc-matchrow">
+            <span class="calc-matchlabel" data-i="${i}" data-j="${j}">${calcState.names[i]} vs ${calcState.names[j]}</span>
+            <input type="number" min="0" class="calc-scoreinput" value="${has ? v[0] : ''}" ${disabled}
+              oninput="calcSetScore(${i},${j},0,this.value)">
+            <span class="calc-colon">:</span>
+            <input type="number" min="0" class="calc-scoreinput" value="${has ? v[1] : ''}" ${disabled}
+              oninput="calcSetScore(${i},${j},1,this.value)">
+          </div>
+          <div class="calc-forfeitrow">
+            <span class="calc-forfeitlabel">기권</span>
+            <select class="calc-forfeitselect" onchange="calcSetForfeit(${i},${j},this.value)">
+              <option value="none" ${forfeit === 'none' ? 'selected' : ''}>정상 진행</option>
+              <option value="i" ${forfeit === 'i' ? 'selected' : ''}>${calcState.names[i]} 기권</option>
+              <option value="j" ${forfeit === 'j' ? 'selected' : ''}>${calcState.names[j]} 기권</option>
+            </select>
+          </div>
+          <div id="calc-warn-${i}-${j}">${warn ? `<p class="calc-warn">${warn}</p>` : ''}</div>
+        </div>`;
+    }
+  }
+  wrap.innerHTML = html;
+}
+
+function calcCompute() {
+  const n = calcState.n;
+  const names = calcState.names.slice(0, n);
+  const won = Array.from({ length: n }, () => Array(n).fill(0));
+  const played = Array.from({ length: n }, () => Array(n).fill(false));
+
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const v = calcState.scores[i + '-' + j];
+      if (v && (v[0] > 0 || v[1] > 0)) {
+        won[i][j] = v[0]; won[j][i] = v[1];
+        played[i][j] = played[j][i] = true;
+      }
+    }
+  }
+
+  const matchWins = Array(n).fill(0);
+  const totalWon = Array(n).fill(0);
+  const totalLost = Array(n).fill(0);
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (i === j || !played[i][j]) continue;
+      totalWon[i] += won[i][j];
+      totalLost[i] += won[j][i];
+      if (won[i][j] > won[j][i]) matchWins[i]++;
+    }
+  }
+
+  const primary = calcState.mode === 'winloss' ? matchWins : totalWon;
+
+  let order = names.map((_, i) => i);
+  order.sort((a, b) => primary[b] - primary[a]);
+
+  const groups = [];
+  let idx = 0;
+  while (idx < order.length) {
+    let k = idx + 1;
+    while (k < order.length && primary[order[k]] === primary[order[idx]]) k++;
+    groups.push(order.slice(idx, k));
+    idx = k;
+  }
+
+  const finalOrder = [];
+  const notes = {};
+  groups.forEach(group => {
+    if (group.length === 1) { finalOrder.push(group[0]); return; }
+    if (group.length === 2) {
+      const [a, b] = group;
+      if (played[a][b] && won[a][b] !== won[b][a]) {
+        if (won[a][b] > won[b][a]) { finalOrder.push(a, b); }
+        else { finalOrder.push(b, a); }
+        notes[a] = notes[b] = '승자승으로 순위 결정';
+      } else {
+        finalOrder.push(a, b);
+        notes[a] = notes[b] = played[a][b] ? '동률 (추첨 필요)' : '동률 (맞대결 기록 없음, 추첨 필요)';
+      }
+      return;
+    }
+    // 3+ tie: subgroup 세트 득실률
+    const ratios = group.map(p => {
+      let w = 0, l = 0;
+      group.forEach(q => {
+        if (p !== q && played[p][q]) { w += won[p][q]; l += won[q][p]; }
+      });
+      const ratio = l === 0 ? (w === 0 ? 0 : Infinity) : (w / l);
+      return { p, w, l, ratio };
+    });
+    ratios.sort((x, y) => y.ratio - x.ratio);
+    let k2 = 0;
+    while (k2 < ratios.length) {
+      let m = k2 + 1;
+      while (m < ratios.length && ratios[m].ratio === ratios[k2].ratio) m++;
+      const sub = ratios.slice(k2, m);
+      sub.forEach(s => {
+        finalOrder.push(s.p);
+        notes[s.p] = sub.length > 1 ? '동률 (추첨 필요)' : '세트 득실률로 순위 결정';
+      });
+      k2 = m;
+    }
+  });
+
+  return { finalOrder, names, matchWins, totalWon, totalLost, notes };
+}
+
+function renderCalcResults() {
+  const box = document.getElementById('calcResults');
+  if (!box) return;
+  const r = calcCompute();
+  const metricLabel = calcState.mode === 'winloss' ? '승수' : '승점';
+
+  const rows = r.finalOrder.map((p, idx) => {
+    const metric = calcState.mode === 'winloss' ? r.matchWins[p] : r.totalWon[p];
+    const note = r.notes[p] || '';
+    return `<tr>
+      <th>${idx + 1}위</th>
+      <td>${r.names[p]}</td>
+      <td>${metric}</td>
+      <td>${r.totalWon[p]}/${r.totalLost[p]}</td>
+      <td class="${note.includes('추첨') ? 'hl' : ''}">${note}</td>
+    </tr>`;
+  }).join('');
+
+  box.innerHTML = `
+    <div class="item">
+      <div class="label"><span class="chip"></span>계산된 순위 (${calcState.mode === 'winloss' ? '① 승패 기준' : '② 누적승점제'})</div>
+      <div class="tablewrap">
+        <table class="restable calc-restable">
+          <thead><tr><th>순위</th><th>선수</th><th>${metricLabel}</th><th>득/실</th><th>비고</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <p class="tcaption">비고에 '추첨'이 표시되면 규정에 따라 추첨(또는 가위바위보)으로 최종 순위를 정해야 합니다.</p>
+    </div>
+  `;
+}
+
+renderHome();
+renderTabbar();
+</script>
+
+</body>
+</html>
