@@ -315,6 +315,93 @@
   .tile.tile-tool .tname { color: #FBF7F0; }
   .tile.tile-tool .tdesc { color: #9AA3B5; }
 
+  /* Roster (클럽 인원) */
+  .roster-adminbar {
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 10px;
+  }
+  .roster-adminstatus { font-size: 11.5px; font-weight: 800; color: #14213D; margin-right: auto; }
+  .roster-adminbtn {
+    font-size: 11px; font-weight: 800; color: #6B7488;
+    background: #F7F3EA; border: none; padding: 7px 12px; border-radius: 20px;
+    cursor: pointer; font-family: inherit;
+  }
+  .roster-loginrow { display: flex; gap: 8px; margin-bottom: 4px; }
+  .roster-pwinput {
+    flex: 1; min-width: 0; width: 100%; padding: 10px 12px; border-radius: 10px; border: 2px solid #EDE7DA;
+    font-size: 14px; font-weight: 700; color: #14213D; font-family: inherit; box-sizing: border-box;
+  }
+  .roster-pwinput:focus { outline: none; border-color: #FF6B35; }
+  .roster-pwbtn {
+    padding: 10px 16px; border-radius: 10px; border: none;
+    background: #14213D; color: #FBF7F0; font-weight: 800; font-size: 13px;
+    cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0;
+  }
+  .roster-pwhint { font-size: 11px; color: #9A9187; font-weight: 600; margin: -2px 0 8px 2px; }
+  .roster-pwerr { font-size: 11.5px; color: #E4483C; font-weight: 700; margin-bottom: 10px; min-height: 1px; }
+  .roster-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .roster-tabbtn {
+    flex: 1;
+    padding: 11px 8px;
+    border-radius: 12px;
+    border: 2px solid #EDE7DA;
+    background: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+    color: #8A8F9E;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .roster-tabbtn.active { background: #14213D; border-color: #14213D; color: #FBF7F0; }
+  .roster-summary {
+    font-size: 12px; color: #8A8F9E; font-weight: 600; margin-bottom: 14px;
+  }
+  .roster-summary b { color: #FF6B35; }
+  .roster-card {
+    background: #FFFFFF;
+    border: 2px solid #EDE7DA;
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .roster-card .rhead {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+  }
+  .roster-card .rname { font-size: 14.5px; font-weight: 800; color: #14213D; }
+  .roster-card .rcount {
+    font-size: 11px; font-weight: 800; color: #FF6B35;
+    background: #FFF1E9; padding: 3px 10px; border-radius: 20px; flex-shrink: 0;
+  }
+  .roster-namewrap { display: flex; flex-wrap: wrap; gap: 6px; }
+  .roster-namechip {
+    font-size: 12.5px; font-weight: 600; color: #3A4256;
+    background: #F7F3EA; padding: 5px 10px; border-radius: 10px;
+  }
+  .roster-namechip.admin {
+    display: flex; align-items: center; gap: 4px; padding: 4px 4px 4px 10px;
+  }
+  .roster-moveselect {
+    font-size: 10.5px; font-weight: 700; color: #6B7488;
+    border: none; background: #EDE7DA; border-radius: 6px; padding: 3px 4px;
+    font-family: inherit; max-width: 70px;
+  }
+  .roster-delbtn {
+    border: none; background: #FF6B35; color: #FFFFFF;
+    width: 17px; height: 17px; border-radius: 50%; font-size: 10px; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    padding: 0; flex-shrink: 0;
+  }
+  .roster-addrow { display: flex; gap: 6px; margin-top: 10px; }
+  .roster-addinput {
+    flex: 1; padding: 8px 10px; border-radius: 8px; border: 2px solid #EDE7DA;
+    font-size: 12.5px; font-family: inherit; color: #14213D;
+  }
+  .roster-addinput:focus { outline: none; border-color: #FF6B35; }
+  .roster-addbtn {
+    padding: 8px 14px; border-radius: 8px; border: none;
+    background: #14213D; color: #FBF7F0; font-size: 11.5px; font-weight: 800;
+    cursor: pointer; font-family: inherit;
+  }
+
   /* Calculator */
   .calc-stepper {
     display: flex; align-items: center; gap: 16px;
@@ -473,6 +560,11 @@
       <div class="detail-pad" id="detailContent"></div>
     </div>
 
+    <!-- ROSTER (클럽 인원) -->
+    <div class="screen" id="screen-roster">
+      <div class="detail-pad" id="rosterContent"></div>
+    </div>
+
     <!-- CALCULATOR -->
     <div class="screen" id="screen-calc">
       <div class="detail-pad" id="calcContent"></div>
@@ -575,6 +667,57 @@ const RULES = [
   }
 ];
 
+const ROSTER_DEFAULT = {
+  gimhae: {
+    label: '김해부수',
+    note: '김해탁구협회 기준 부수',
+    divisions: [
+      { name: '2부', names: ['김석원', '김유삼', '남관우', '윤수원', '윤현섭', '장민규', '정광섭', '최동주'] },
+      { name: '3부', names: ['김대동', '박병주', '박지후', '신영상', '오은영', '이호신', '도광락', '손권'] },
+      { name: '4부', names: ['강동윤', '김대석', '김성권', '김세희', '김진태(5)', '박순화', '여동필', '신민수', '윤진권', '신훈태', '박준용'] },
+      { name: '5부', names: ['김관도', '김영숙', '명금희', '박순갑', '박현미', '배종욱', '설영해', '송경복', '송인원', '황상미', '양희환', '장영선', '정병석', '정태형', '황은정', '오정훈', '김진성'] },
+      { name: '6부', names: ['김형진', '박준호', '이상웅', '이세훈', '임석준', '장희선', '정미혜', '정희련', '하순천', '이상원', '진미연', '강수석', '최을식'] },
+      { name: '7부', names: ['이현주', '김태언', '박재기', '박소영', '박정숙', '배선영', '허성범', '황종수', '박주덕'] },
+      { name: '8부', names: ['백민지', '이미예'] },
+      { name: '미분류', names: ['성철호', '허세은'] }
+    ]
+  },
+  gyeongnam: {
+    label: '경남부수',
+    note: '경남탁구협회 기준 부수',
+    divisions: [
+      { name: '남자 4부', names: ['김석원', '장민규', '최동주'] },
+      { name: '남자 5부', names: ['김대동', '김유삼', '남관우', '신영상', '윤수원', '윤현섭', '정광섭'] },
+      { name: '남자 6부', names: ['강동윤', '도광락', '박병주', '박순갑', '손권', '신민수', '여동필', '이세훈', '이호신', '장영선', '김대석', '김진성'] },
+      { name: '남자 7부', names: ['김성권', '김진태', '박준호', '송경복', '송인원', '윤진권', '이상원', '임석준', '정태형', '박준용', '양희환'] },
+      { name: '남자 8부', names: ['강수석', '김관도', '김태언', '김형진', '박재기', '박주덕', '배종욱', '성철호', '신훈태', '오정훈', '이상웅', '정병석', '허성범', '허세훈'] },
+      { name: '여자 3부 (남자 6부)', names: ['김세희', '박지후', '오은영'] },
+      { name: '여자 4부 (남자 7부)', names: ['김영숙', '명금희', '박현미', '황상미'] },
+      { name: '여자 5부 (남자 8부)', names: ['설영해', '이현주', '정희련', '최을식', '박순화', '진미연'] },
+      { name: '여자 6부 (남자 9부)', names: ['장희선', '정미혜', '황은정', '하순천'] },
+      { name: '여자 7부 (남자 10부)', names: ['박정숙', '배선영', '이미예', '황종수', '박소영'] },
+      { name: '여자 8부 (남자 11부)', names: ['백민지'] }
+    ]
+  }
+};
+
+let ROSTER = JSON.parse(JSON.stringify(ROSTER_DEFAULT));
+try {
+  const savedRoster = localStorage.getItem('rosterData');
+  if (savedRoster) {
+    const parsed = JSON.parse(savedRoster);
+    if (parsed && parsed.gimhae && parsed.gyeongnam) ROSTER = parsed;
+  }
+} catch (e) {}
+
+function saveRosterOverrides() {
+  try { localStorage.setItem('rosterData', JSON.stringify(ROSTER)); } catch (e) {}
+}
+
+let rosterTab = 'gimhae';
+let rosterAdmin = false;
+try { rosterAdmin = localStorage.getItem('rosterAdmin') === '1'; } catch (e) {}
+
 let currentIndex = -1; // -1 = home
 
 function renderHome() {
@@ -586,6 +729,12 @@ function renderHome() {
       <div class="tdesc">${r.desc}</div>
     </button>
   `).join('') + `
+    <button class="tile" onclick="openRoster()">
+      <div class="tnum">06</div>
+      <div class="tname">부수현황</div>
+      <div class="tdesc">부수 현황 · 명단 확인</div>
+    </button>
+  ` + `
     <button class="tile tile-tool" onclick="openCalc()">
       <div class="tname">🧮 순위 계산기</div>
       <div class="tdesc">경기 결과만 입력하면 순위를 자동 계산</div>
@@ -604,6 +753,9 @@ function renderTabbar() {
       <div class="dotmark"></div><span class="lbl">${r.num}</span>
     </button>`;
   });
+  html += `<button class="tabbtn ${currentIndex === 'roster' ? 'active' : ''}" onclick="openRoster()">
+      <div class="dotmark"></div><span class="lbl">06</span>
+    </button>`;
   html += `<button class="tabbtn ${currentIndex === 'calc' ? 'active' : ''}" onclick="openCalc()">
       <div class="dotmark"></div><span class="lbl">계산기</span>
     </button>`;
@@ -653,6 +805,7 @@ function openRule(i) {
   const r = RULES[i];
   document.getElementById('screen-home').classList.remove('active');
   document.getElementById('screen-calc').classList.remove('active');
+  document.getElementById('screen-roster').classList.remove('active');
   document.getElementById('screen-detail').classList.add('active');
   document.getElementById('backBtn').classList.add('show');
   document.getElementById('titleRow').innerHTML = `<span style="font-size:20px">${r.icon}</span><h1 class="screen-title">${r.name}</h1>`;
@@ -677,6 +830,7 @@ function goHome() {
   currentIndex = -1;
   document.getElementById('screen-detail').classList.remove('active');
   document.getElementById('screen-calc').classList.remove('active');
+  document.getElementById('screen-roster').classList.remove('active');
   document.getElementById('screen-home').classList.add('active');
   document.getElementById('backBtn').classList.remove('show');
   document.getElementById('titleRow').innerHTML = `<div class="ball"></div><h1>장유 탁구리그</h1>`;
@@ -749,6 +903,7 @@ function openCalc() {
   currentIndex = 'calc';
   document.getElementById('screen-home').classList.remove('active');
   document.getElementById('screen-detail').classList.remove('active');
+  document.getElementById('screen-roster').classList.remove('active');
   document.getElementById('screen-calc').classList.add('active');
   document.getElementById('backBtn').classList.add('show');
   document.getElementById('titleRow').innerHTML = `<span style="font-size:20px">🧮</span><h1 class="screen-title">순위 계산기</h1>`;
@@ -756,6 +911,136 @@ function openCalc() {
   renderCalc();
   document.getElementById('screen-calc').scrollTo(0, 0);
   renderTabbar();
+}
+
+function openRoster() {
+  currentIndex = 'roster';
+  document.getElementById('screen-home').classList.remove('active');
+  document.getElementById('screen-detail').classList.remove('active');
+  document.getElementById('screen-calc').classList.remove('active');
+  document.getElementById('screen-roster').classList.add('active');
+  document.getElementById('backBtn').classList.add('show');
+  document.getElementById('titleRow').innerHTML = `<span style="font-size:20px">📋</span><h1 class="screen-title">클럽 인원</h1>`;
+  document.getElementById('subtitleText').innerText = 'TOOL · 부수별 회원 명단';
+  renderRosterContent();
+  document.getElementById('screen-roster').scrollTo(0, 0);
+  renderTabbar();
+}
+
+function setRosterTab(key) {
+  rosterTab = key;
+  renderRosterContent();
+  document.getElementById('screen-roster').scrollTo(0, 0);
+}
+
+function renderRosterContent() {
+  const data = ROSTER[rosterTab];
+  const total = data.divisions.reduce((s, d) => s + d.names.length, 0);
+
+  let html = `<div class="roster-adminbar">`;
+  if (rosterAdmin) {
+    html += `<span class="roster-adminstatus">🔓 관리자 모드</span>
+      <button class="roster-adminbtn" onclick="rosterResetData()">초기화</button>
+      <button class="roster-adminbtn" onclick="rosterAdminLogout()">종료</button>`;
+  } else {
+    html += `<button class="roster-adminbtn" onclick="rosterShowLogin()">🔒 관리자 모드</button>`;
+  }
+  html += `</div><div id="rosterLoginBox"></div>`;
+
+  html += `<div class="roster-tabs">` +
+    Object.keys(ROSTER).map(k => `<button class="roster-tabbtn ${rosterTab === k ? 'active' : ''}" onclick="setRosterTab('${k}')">${ROSTER[k].label}</button>`).join('') +
+    `</div>`;
+  html += `<p class="roster-summary">${data.note} · 총 <b>${total}명</b></p>`;
+
+  html += data.divisions.map((d, di) => `
+    <div class="roster-card">
+      <div class="rhead">
+        <span class="rname">${d.name}</span>
+        <span class="rcount">${d.names.length}명</span>
+      </div>
+      <div class="roster-namewrap">${d.names.map((n, ni) => rosterAdmin ? `
+        <span class="roster-namechip admin">
+          <span>${n}</span>
+          <select class="roster-moveselect" onchange="rosterMoveName('${rosterTab}', ${di}, ${ni}, this.value)">
+            ${data.divisions.map((d2, di2) => `<option value="${di2}" ${di2 === di ? 'selected' : ''}>${d2.name}</option>`).join('')}
+          </select>
+          <button type="button" class="roster-delbtn" onclick="rosterDeleteName('${rosterTab}', ${di}, ${ni})">✕</button>
+        </span>
+      ` : `<span class="roster-namechip">${n}</span>`).join('')}</div>
+      ${rosterAdmin ? `
+        <div class="roster-addrow">
+          <input type="text" class="roster-addinput" id="rosterAdd-${rosterTab}-${di}" placeholder="이름 추가" onkeydown="if(event.key==='Enter') rosterAddName('${rosterTab}', ${di})">
+          <button type="button" class="roster-addbtn" onclick="rosterAddName('${rosterTab}', ${di})">+ 추가</button>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+  document.getElementById('rosterContent').innerHTML = html;
+}
+
+function rosterShowLogin() {
+  const box = document.getElementById('rosterLoginBox');
+  box.innerHTML = `
+    <div class="roster-loginrow">
+      <input type="password" inputmode="numeric" maxlength="8" class="roster-pwinput" id="rosterPwInput" placeholder="관리자 비밀번호" onkeydown="if(event.key==='Enter') rosterTryLogin()">
+      <button type="button" class="roster-pwbtn" onclick="rosterTryLogin()">확인</button>
+    </div>
+    <p class="roster-pwhint">힌트 : 입구 비밀번호</p>
+    <p class="roster-pwerr" id="rosterPwErr"></p>
+  `;
+  const input = document.getElementById('rosterPwInput');
+  if (input) input.focus();
+}
+
+function rosterTryLogin() {
+  const input = document.getElementById('rosterPwInput');
+  const val = input ? input.value : '';
+  if (val === '1458') {
+    rosterAdmin = true;
+    try { localStorage.setItem('rosterAdmin', '1'); } catch (e) {}
+    renderRosterContent();
+  } else {
+    const err = document.getElementById('rosterPwErr');
+    if (err) err.textContent = '비밀번호가 올바르지 않습니다.';
+  }
+}
+
+function rosterAdminLogout() {
+  rosterAdmin = false;
+  try { localStorage.removeItem('rosterAdmin'); } catch (e) {}
+  renderRosterContent();
+}
+
+function rosterMoveName(tabKey, fromDi, ni, toDiStr) {
+  const toDi = parseInt(toDiStr, 10);
+  if (toDi === fromDi) return;
+  const divisions = ROSTER[tabKey].divisions;
+  const [name] = divisions[fromDi].names.splice(ni, 1);
+  divisions[toDi].names.push(name);
+  saveRosterOverrides();
+  renderRosterContent();
+}
+
+function rosterDeleteName(tabKey, di, ni) {
+  ROSTER[tabKey].divisions[di].names.splice(ni, 1);
+  saveRosterOverrides();
+  renderRosterContent();
+}
+
+function rosterAddName(tabKey, di) {
+  const input = document.getElementById(`rosterAdd-${tabKey}-${di}`);
+  const val = (input && input.value || '').trim();
+  if (!val) return;
+  ROSTER[tabKey].divisions[di].names.push(val);
+  saveRosterOverrides();
+  renderRosterContent();
+}
+
+function rosterResetData() {
+  if (!confirm('명단을 초기 상태로 되돌릴까요? 저장된 수정 내용이 모두 사라집니다.')) return;
+  ROSTER = JSON.parse(JSON.stringify(ROSTER_DEFAULT));
+  try { localStorage.removeItem('rosterData'); } catch (e) {}
+  renderRosterContent();
 }
 
 function calcSetPlayers(delta) {
